@@ -7,10 +7,10 @@ pipeline {
 
   stages {
     stage('Clone') {
-      steps {
-        echo 'Cloning repository...'
+    steps {
+        deleteDir()
         checkout scm
-      }
+    }
     }
 
     stage('Install Dependencies') {
