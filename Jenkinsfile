@@ -1,14 +1,27 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'node:18'
+    }
+  }
+
   stages {
-    stage('Clean workspace') {
+    stage('Clone') {
       steps {
-        deleteDir()
+        echo 'Cloning repository...'
+        checkout scm
       }
     }
-    stage('Checkout') {
+
+    stage('Install Dependencies') {
       steps {
-        checkout scm
+        sh 'npm install'
+      }
+    }
+
+    stage('Run Tests') {
+      steps {
+        sh 'npm test'
       }
     }
   }
