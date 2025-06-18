@@ -1,27 +1,21 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:18'
-    }
-  }
-
+  agent any
   stages {
-    stage('Clone') {
-    steps {
-        deleteDir()
-        checkout scm
-    }
-    }
-
-    stage('Install Dependencies') {
+    stage('Clean workspace') {
       steps {
-        sh 'npm install'
+        deleteDir()
       }
     }
-
-    stage('Run Tests') {
+    stage('Checkout') {
       steps {
-        sh 'npm test'
+        checkout([$class: 'GitSCM', 
+          branches: [[name: '*/main']], 
+          userRemoteConfigs: [[url: 'https://github.com/AlexBuzea/jenkins-for-node-app']]])
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'ls -la'
       }
     }
   }
