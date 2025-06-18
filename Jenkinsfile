@@ -1,27 +1,9 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:18'
-    }
-  }
-
+  agent any
   stages {
-    stage('Clone') {
+    stage('Hello') {
       steps {
-        echo 'Cloning repository...'
-        checkout scm
-      }
-    }
-
-    stage('Install Dependencies') {
-      steps {
-        sh 'npm install'
-      }
-    }
-
-    stage('Run Tests') {
-      steps {
-        sh 'npm test'
+        echo 'Hello from Pipeline!'
       }
     }
   }
