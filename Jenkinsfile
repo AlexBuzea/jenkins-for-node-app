@@ -1,33 +1,44 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/your-username/your-nodejs-app.git'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh 'node test.js'
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build('my-node-app:latest')
-                }
-            }
-        }
-        stage('Run Docker Container') {
-            steps {
-                sh 'docker run -d -p 3000:3000 my-node-app:latest'
-            }
-        }
+  // don’t do the default “Declarative: Checkout SCM” step
+  options {
+    skipDefaultCheckout()
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        // Wipe out whatever’s in the workspace
+        deleteDir()
+        // Now do a single, clean clone
+        checkout scm
+      }
     }
-    post {
-        always {
-            sh 'docker system prune -f'
+
+    stage('Build Docker Image') {
+      steps {
+        script {
+          // build your Node.js image
+          docker.build('my-node-app:latest')
         }
+      }
     }
+
+    stage('Run Tests') {
+      steps {
+        // example: run a container and invoke your test script
+        sh '''
+          docker run --rm my-node-app:latest node test.js
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      // optional cleanup
+      sh 'docker system prune -f'
+    }
+  }
 }
